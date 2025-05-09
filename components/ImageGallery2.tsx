@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from "framer-motion";
-import { usePathFollower } from "../hooks/usePathFollower";
+import { usePathFollower } from "@/hooks/usePathFollower";
 
 function ImageGallery2() {
   const point1 = usePathFollower("motionPath", 5000);
