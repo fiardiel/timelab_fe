@@ -13,6 +13,8 @@ interface PathImageStreamProps {
   svgRef: RefObject<SVGSVGElement>;
   onClick?: (index: number) => void;
   imageLinks: string[];
+  selectedIndex?: number | null; // NEW: optional prop to hide selected image
+  startIndex?: number; // NEW: helps calculate global index for uniqueness
 }
 
 export const PathImageStream = ({
@@ -23,23 +25,26 @@ export const PathImageStream = ({
   svgRef,
   onClick,
   imageLinks,
+  selectedIndex = null,
+  startIndex = 0, // default to 0
 }: PathImageStreamProps) => {
   return (
     <>
       {imageLinks.map((imageLink, i) => {
+        const globalIndex = startIndex + i;
+        if (selectedIndex === globalIndex) return null; // skip if selected
+
         const startDelay = i * delayStep;
         const point = usePathFollower(pathId, duration, svgRef, paused, startDelay);
         const progress = usePathProgress(duration, paused, startDelay);
-
-        // Smooth scale based on progress (0 -> 1 -> 0)
-        const scale = 3* Math.sin(progress * Math.PI);
+        const scale = 3 * Math.sin(progress * Math.PI);
 
         return (
           <motion.g
-            key={imageLink}
+            key={`${pathId}-${i}`}
             animate={{ scale }}
             style={{ transformOrigin: 'center', cursor: 'pointer' }}
-            onClick={() => onClick?.(i)}
+            onClick={() => onClick?.(globalIndex)}
           >
             <image
               href={imageLink}

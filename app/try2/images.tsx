@@ -2,10 +2,11 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { PathImageStream } from '@/components/PathImageStream'; // update path as needed
+import { PathImageStream } from '@/components/PathImageStream';
+import { CircleLayout } from '@/components/CircleLayout';
 
 interface SvgFollowPageProps {
-  images: string[]
+  images: string[];
 }
 
 export default function SvgFollowPage({ images }: SvgFollowPageProps) {
@@ -88,46 +89,14 @@ export default function SvgFollowPage({ images }: SvgFollowPageProps) {
         />
       </svg>
 
-      {/* Overlay and Enlarged Image */}
+      {/* Fullscreen Focused View with CircleLayout */}
       <AnimatePresence>
         {selectedImage !== null && (
-          <>
-            {/* Dark background */}
-            <motion.div
-              className="fixed inset-0 bg-black z-20"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedImage(null)}
-            />
-
-            <motion.div
-              className="fixed inset-0 z-30 flex items-center justify-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-
-              {/* Centered Enlarged Image */}
-              <motion.img
-                src={images[selectedImage]}
-                alt="zoomed"
-                className="z-30 rounded-lg"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                style={{
-                  width: 'min(40vw, 200px)',
-                  height: 'auto',
-                  maxHeight: '60vh',
-                }}
-                onClick={() => setSelectedImage(null)}
-              />
-
-            </motion.div>
-
-          </>
+          <CircleLayout
+            centerImage={images[selectedImage]}
+            surroundingImages={images.filter((_, i) => i !== selectedImage).slice(0, 8)}
+            onClose={() => setSelectedImage(null)}
+          />
         )}
       </AnimatePresence>
     </main>
