@@ -2,50 +2,16 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRef, useState } from 'react';
-import { usePathFollower } from '@/hooks/usePathFollower';
 import { PathImageStream } from '@/components/PathImageStream'; // update path as needed
 
 interface SvgFollowPageProps {
-  images: string[][]
+  images: string[]
 }
 
 export default function SvgFollowPage({ images }: SvgFollowPageProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const paused = selectedImage !== null;
-
-  const point1 = usePathFollower("motionPath", 5000, svgRef, paused);
-  const point2 = usePathFollower("motionPath2", 6000, svgRef, paused);
-  const point3 = usePathFollower("motionPath3", 8000, svgRef, paused);
-  const point4 = usePathFollower("motionPath4", 9000, svgRef, paused);
-  const point5 = usePathFollower("motionPath5", 10000, svgRef, paused);
-
-  const renderAnimatedImage = (point: { x: number; y: number }, index: number, duration: number) => {
-    if (selectedImage !== null) return null; // hide all when focused
-
-    return (
-      <motion.image
-        key={index}
-        href="/0Z.png"
-        x={point.x - 2.5}
-        y={point.y - 2.5}
-        width={5}
-        height={5}
-        animate={
-          paused
-            ? { scale: 1 }
-            : { scale: [0, 2, 0] }
-        }
-        transition={
-          paused
-            ? { duration: 0.3 }
-            : { duration, repeat: Infinity, ease: 'easeInOut' }
-        }
-        style={{ cursor: 'pointer', transformOrigin: 'center' }}
-        onClick={() => setSelectedImage(index)}
-      />
-    );
-  };
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-white p-8 relative overflow-hidden">
@@ -78,48 +44,47 @@ export default function SvgFollowPage({ images }: SvgFollowPageProps) {
         <PathImageStream
           pathId="motionPath"
           duration={5000}
-          imageLinks={images[0]}
+          imageLinks={images.slice(0, 4)}
           delayStep={1000}
           paused={paused}
           svgRef={svgRef}
           onClick={(index) => setSelectedImage(index)}
         />
-
         <PathImageStream
           pathId="motionPath2"
-          imageLinks={images[1]}
+          imageLinks={images.slice(4, 8)}
           duration={5000}
           delayStep={1000}
           paused={paused}
           svgRef={svgRef}
-          onClick={(index) => setSelectedImage(index + 100)} // offset ID for uniqueness
+          onClick={(index) => setSelectedImage(index + 4)} // offset ID for uniqueness
         />
         <PathImageStream
           pathId="motionPath3"
-          imageLinks={images[2]}
+          imageLinks={images.slice(8, 12)}
           duration={8000}
           delayStep={1000}
           paused={paused}
           svgRef={svgRef}
-          onClick={(index) => setSelectedImage(index + 200)} // offset ID for uniqueness
+          onClick={(index) => setSelectedImage(index + 8)} // offset ID for uniqueness
         />
         <PathImageStream
           pathId="motionPath4"
-          imageLinks={images[3]}
+          imageLinks={images.slice(12, 16)}
           duration={9000}
           delayStep={1000}
           paused={paused}
           svgRef={svgRef}
-          onClick={(index) => setSelectedImage(index + 300)} // offset ID for uniqueness
+          onClick={(index) => setSelectedImage(index + 12)} // offset ID for uniqueness
         />
         <PathImageStream
           pathId="motionPath5"
-          imageLinks={images[4]}
+          imageLinks={images.slice(16, 20)}
           duration={10000}
           delayStep={1000}
           paused={paused}
           svgRef={svgRef}
-          onClick={(index) => setSelectedImage(index + 300)} // offset ID for uniqueness
+          onClick={(index) => setSelectedImage(index + 16)} // offset ID for uniqueness
         />
       </svg>
 
@@ -145,7 +110,7 @@ export default function SvgFollowPage({ images }: SvgFollowPageProps) {
 
               {/* Centered Enlarged Image */}
               <motion.img
-                src="/0Z.png"
+                src={images[selectedImage]}
                 alt="zoomed"
                 className="z-30 rounded-lg"
                 initial={{ scale: 0, opacity: 0 }}

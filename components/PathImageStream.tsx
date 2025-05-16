@@ -1,8 +1,8 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 import { usePathFollower } from '@/hooks/usePathFollower';
-import { RefObject } from 'react';
+import { RefObject, useEffect } from 'react';
 
 interface PathImageStreamProps {
   pathId: string;
@@ -29,10 +29,27 @@ export const PathImageStream = ({
       {imageLinks.map((imageLink, i) => {
         const appearDelay = (i * delayStep) / 1000;
         const point = usePathFollower(pathId, duration, svgRef, paused, i * delayStep);
+        const controls = useAnimation()
+
+        useEffect(() => {
+          if (paused) {
+            controls.stop()
+          } else {
+            controls.start({
+              scale: [0, 2, 0],
+              transition: {
+                duration: transitionDuration,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: appearDelay,
+              }
+            })
+          }
+        }, [paused, controls, appearDelay, transitionDuration])
+
         return (
           <motion.g
-            animate={paused ? { scale: 1 } : { scale: [0, 2, 0] }}
-            transition={{ duration: transitionDuration, repeat: Infinity, ease: 'easeInOut', delay: appearDelay }}
+            animate={controls}
             style={{ transformOrigin: 'center', cursor: 'pointer' }}
             onClick={() => onClick?.(i)}
             key={imageLink}

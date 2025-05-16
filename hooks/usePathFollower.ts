@@ -8,42 +8,53 @@ export function usePathFollower(
   startDelay: number = 0
 ) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const start = useRef<number | null>(null);
+
+  const startTime = useRef<number | null>(null);
+  const pauseStart = useRef<number | null>(null);
+  const totalPausedTime = useRef<number>(0);
   const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (paused) {
-      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
-      return;
-    }
-
     const path = document.getElementById(pathId) as SVGPathElement | null;
     if (!path || !svgRef.current) return;
 
     const length = path.getTotalLength();
 
     const animate = (timestamp: number) => {
-      if (start.current === null) start.current = timestamp;
-      const adjustedTime = timestamp - start.current;
+      if (startTime.current === null) startTime.current = timestamp;
+      const elapsedSinceStart = timestamp - startTime.current - totalPausedTime.current;
 
-      if (adjustedTime < startDelay) {
+      if (elapsedSinceStart < startDelay) {
         frameRef.current = requestAnimationFrame(animate);
         return;
       }
 
-      const elapsed = (adjustedTime - startDelay) % duration;
+      const elapsed = (elapsedSinceStart - startDelay) % duration;
       const progress = elapsed / duration;
       const point = path.getPointAtLength(progress * length);
       setPosition({ x: point.x, y: point.y });
+
       frameRef.current = requestAnimationFrame(animate);
     };
 
+    if (!paused) {
+      // Resuming: adjust for time spent paused
+      if (pauseStart.current !== null) {
+        totalPausedTime.current += performance.now() - pauseStart.current;
+        pauseStart.current = null;
+      }
+      frameRef.current = requestAnimationFrame(animate);
+    } else {
+      // Pausing: record pause start time
+      pauseStart.current = performance.now();
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+    }
 
-    frameRef.current = requestAnimationFrame(animate);
     return () => {
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
     };
-  }, [pathId, duration, svgRef, paused]);
+  }, [pathId, duration, svgRef, paused, startDelay]);
 
   return position;
 }
+
