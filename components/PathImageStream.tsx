@@ -1,8 +1,9 @@
 'use client';
 
-import { motion, useAnimation } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { usePathFollower } from '@/hooks/usePathFollower';
-import { RefObject, useEffect } from 'react';
+import { usePathProgress } from '@/hooks/usePathProgress';
+import { RefObject } from 'react';
 
 interface PathImageStreamProps {
   pathId: string;
@@ -11,7 +12,7 @@ interface PathImageStreamProps {
   paused: boolean;
   svgRef: RefObject<SVGSVGElement>;
   onClick?: (index: number) => void;
-  imageLinks: string[]
+  imageLinks: string[];
 }
 
 export const PathImageStream = ({
@@ -23,36 +24,22 @@ export const PathImageStream = ({
   onClick,
   imageLinks,
 }: PathImageStreamProps) => {
-  const transitionDuration = duration / 1000;
   return (
     <>
       {imageLinks.map((imageLink, i) => {
-        const appearDelay = (i * delayStep) / 1000;
-        const point = usePathFollower(pathId, duration, svgRef, paused, i * delayStep);
-        const controls = useAnimation()
+        const startDelay = i * delayStep;
+        const point = usePathFollower(pathId, duration, svgRef, paused, startDelay);
+        const progress = usePathProgress(duration, paused, startDelay);
 
-        useEffect(() => {
-          if (paused) {
-            controls.stop()
-          } else {
-            controls.start({
-              scale: [0, 2, 0],
-              transition: {
-                duration: transitionDuration,
-                repeat: Infinity,
-                ease: 'easeInOut',
-                delay: appearDelay,
-              }
-            })
-          }
-        }, [paused, controls, appearDelay, transitionDuration])
+        // Smooth scale based on progress (0 -> 1 -> 0)
+        const scale = 3* Math.sin(progress * Math.PI);
 
         return (
           <motion.g
-            animate={controls}
+            key={imageLink}
+            animate={{ scale }}
             style={{ transformOrigin: 'center', cursor: 'pointer' }}
             onClick={() => onClick?.(i)}
-            key={imageLink}
           >
             <image
               href={imageLink}
@@ -62,7 +49,6 @@ export const PathImageStream = ({
               height={5}
             />
           </motion.g>
-
         );
       })}
     </>
