@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { PathImageStream } from '@/components/PathImageStream';
 import { CircleLayout } from '@/components/CircleLayout';
@@ -96,6 +96,9 @@ export default function SvgFollowPage({ images }: SvgFollowPageProps) {
             centerImage={images[selectedImage]}
             surroundingImages={images.filter((_, i) => i !== selectedImage).slice(0, 8)}
             onClose={() => setSelectedImage(null)}
+            onSelect={(newImage) => {
+              images.find((img, i) => img === newImage && setSelectedImage(i))
+            }}
           />
         )}
       </AnimatePresence>
