@@ -43,6 +43,8 @@ export const CircleLayout: React.FC<CircleLayoutProps> = ({
     <>
       {/* Background Overlay */}
       <motion.div
+        data-testid="overlay"
+        role='presentation'
         className="fixed inset-0 bg-black/70 z-30 backdrop-blur-3xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 0.9 }}

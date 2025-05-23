@@ -6,12 +6,14 @@ import { PathImageStream } from '@/components/PathImageStream';
 import { CircleLayout } from '@/components/CircleLayout';
 
 interface SvgFollowPageProps {
-  images: string[];
+  images: {
+    image_url: string;
+    people: Record<string, boolean>;
+  }[];
 }
 
 export default function SvgFollowPage({ images }: SvgFollowPageProps) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [selectedImage, setSelectedImage] = useState<number | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const paused = selectedIndex !== null;
 
@@ -20,15 +22,15 @@ export default function SvgFollowPage({ images }: SvgFollowPageProps) {
   const surroundingImages =
     selectedIndex !== null && selected
       ? images
-          .filter((img, i) => i !== selectedIndex)
-          .filter((img) => {
-            const sharedPeople = Object.keys(img.people || {}).filter(
-              (person) => selected.people?.[person] && img.people[person]
-            );
-            return sharedPeople.length > 0;
-          })
-          .slice(0, 8)
-          .map((img) => img.image_url)
+        .filter((_, i) => i !== selectedIndex)
+        .filter((img) => {
+          const sharedPeople = Object.keys(img.people || {}).filter(
+            (person) => selected.people?.[person] && img.people[person]
+          );
+          return sharedPeople.length > 0;
+        })
+        .slice(0, 8)
+        .map((img) => img.image_url)
       : [];
 
 
@@ -109,7 +111,7 @@ export default function SvgFollowPage({ images }: SvgFollowPageProps) {
 
       {/* Fullscreen Focused View with CircleLayout */}
       <AnimatePresence>
-        {selectedIndex  !== null && selected && (
+        {selectedIndex !== null && selected && (
           <CircleLayout
             centerImage={selected.image_url}
             surroundingImages={surroundingImages}

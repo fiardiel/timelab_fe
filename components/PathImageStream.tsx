@@ -1,9 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { usePathFollower } from '@/hooks/usePathFollower';
-import { usePathProgress } from '@/hooks/usePathProgress';
 import { RefObject } from 'react';
+import { SinglePathImage } from './SinglePathImage';
 
 interface PathImageStreamProps {
   pathId: string;
@@ -13,8 +11,8 @@ interface PathImageStreamProps {
   svgRef: RefObject<SVGSVGElement>;
   onClick?: (index: number) => void;
   imageLinks: string[];
-  selectedIndex?: number | null; // NEW: optional prop to hide selected image
-  startIndex?: number; // NEW: helps calculate global index for uniqueness
+  selectedIndex?: number | null;
+  startIndex?: number;
 }
 
 export const PathImageStream = ({
@@ -26,36 +24,30 @@ export const PathImageStream = ({
   onClick,
   imageLinks,
   selectedIndex = null,
-  startIndex = 0, // default to 0
+  startIndex = 0,
 }: PathImageStreamProps) => {
   return (
     <>
       {imageLinks.map((imageLink, i) => {
         const globalIndex = startIndex + i;
-        if (selectedIndex === globalIndex) return null; // skip if selected
+        if (selectedIndex === globalIndex) return null;
 
-        const startDelay = i * delayStep;
-        const point = usePathFollower(pathId, duration, svgRef, paused, startDelay);
-        const progress = usePathProgress(duration, paused, startDelay);
-        const scale = 3 * Math.sin(progress * Math.PI);
-
+        const delay = i * delayStep;
         return (
-          <motion.g
+          <SinglePathImage
             key={`${pathId}-${i}`}
-            animate={{ scale }}
-            style={{ transformOrigin: 'center', cursor: 'pointer' }}
-            onClick={() => onClick?.(globalIndex)}
-          >
-            <image
-              href={imageLink}
-              x={point.x - 2.5}
-              y={point.y - 2.5}
-              width={5}
-              height={5}
-            />
-          </motion.g>
+            pathId={pathId}
+            duration={duration}
+            delay={delay}
+            paused={paused}
+            svgRef={svgRef}
+            imageLink={imageLink}
+            globalIndex={globalIndex}
+            onClick={onClick}
+          />
         );
       })}
     </>
   );
 };
+
