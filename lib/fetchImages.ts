@@ -1,20 +1,21 @@
-"use server"
+"use server";
 
-import { supabase } from "@/lib/supabaseClient"
+import { supabase } from "@/lib/supabaseClient";
 
 export const fetchImages = async () => {
-  const bucketName = process.env.NEXT_PUBLIC_SUPABASE_BUCKET!
-  const { data, error } = await supabase.storage.from(bucketName).list("")
+  const { data, error } = await supabase
+    .from("imagerecord")
+    .select("file_name, people");
 
   if (error || !data) {
-    console.error("Error fetching images:", error)
-    return []
+    console.error("Error fetching image records:", error);
+    return [];
   }
 
-  const urls = data.map((file) =>
-    supabase.storage.from(bucketName).getPublicUrl(file.name).data.publicUrl
-  )
+  const result = data.map((record) => ({
+    image_url: record.file_name, // Already the full URL
+    people: record.people,
+  }));
 
-  return urls
-}
-
+  return result;
+};

@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 
 // app/svg-follow/page.tsx
 export default function SvgFollowPage() {

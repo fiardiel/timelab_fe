@@ -6,13 +6,33 @@ import { PathImageStream } from '@/components/PathImageStream';
 import { CircleLayout } from '@/components/CircleLayout';
 
 interface SvgFollowPageProps {
-  images: string[];
+  images: {
+    image_url: string;
+    people: Record<string, boolean>;
+  }[];
 }
 
 export default function SvgFollowPage({ images }: SvgFollowPageProps) {
   const svgRef = useRef<SVGSVGElement>(null);
-  const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const paused = selectedImage !== null;
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const paused = selectedIndex !== null;
+
+  const selected = selectedIndex !== null ? images[selectedIndex] : null;
+
+  const surroundingImages =
+    selectedIndex !== null && selected
+      ? images
+        .filter((_, i) => i !== selectedIndex)
+        .filter((img) => {
+          const sharedPeople = Object.keys(img.people || {}).filter(
+            (person) => selected.people?.[person] && img.people[person]
+          );
+          return sharedPeople.length > 0;
+        })
+        .slice(0, 8)
+        .map((img) => img.image_url)
+      : [];
+
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-white p-8 relative overflow-hidden">
@@ -44,61 +64,63 @@ export default function SvgFollowPage({ images }: SvgFollowPageProps) {
 
         <PathImageStream
           pathId="motionPath"
+          imageLinks={images.slice(0, 4).map(img => img.image_url)}
           duration={5000}
-          imageLinks={images.slice(0, 4)}
           delayStep={1000}
           paused={paused}
           svgRef={svgRef}
-          onClick={(index) => setSelectedImage(index)}
+          onClick={(index) => setSelectedIndex(index)}
         />
         <PathImageStream
           pathId="motionPath2"
-          imageLinks={images.slice(4, 8)}
+          imageLinks={images.slice(4, 8).map(img => img.image_url)}
           duration={5000}
           delayStep={1000}
           paused={paused}
           svgRef={svgRef}
-          onClick={(index) => setSelectedImage(index + 4)} // offset ID for uniqueness
+          onClick={(index) => setSelectedIndex(index + 4)} // offset ID for uniqueness
         />
         <PathImageStream
           pathId="motionPath3"
-          imageLinks={images.slice(8, 12)}
+          imageLinks={images.slice(8, 12).map(img => img.image_url)}
           duration={8000}
           delayStep={1000}
           paused={paused}
           svgRef={svgRef}
-          onClick={(index) => setSelectedImage(index + 8)} // offset ID for uniqueness
+          onClick={(index) => setSelectedIndex(index + 8)} // offset ID for uniqueness
         />
         <PathImageStream
           pathId="motionPath4"
-          imageLinks={images.slice(12, 16)}
+          imageLinks={images.slice(12, 16).map(img => img.image_url)}
           duration={9000}
           delayStep={1000}
           paused={paused}
           svgRef={svgRef}
-          onClick={(index) => setSelectedImage(index + 12)} // offset ID for uniqueness
+          onClick={(index) => setSelectedIndex(index + 12)} // offset ID for uniqueness
         />
         <PathImageStream
           pathId="motionPath5"
-          imageLinks={images.slice(16, 20)}
+          imageLinks={images.slice(16, 20).map(img => img.image_url)}
           duration={10000}
           delayStep={1000}
           paused={paused}
           svgRef={svgRef}
-          onClick={(index) => setSelectedImage(index + 16)} // offset ID for uniqueness
+          onClick={(index) => setSelectedIndex(index + 16)} // offset ID for uniqueness
         />
       </svg>
 
       {/* Fullscreen Focused View with CircleLayout */}
       <AnimatePresence>
-        {selectedImage !== null && (
+        {selectedIndex !== null && selected && (
           <CircleLayout
-            centerImage={images[selectedImage]}
-            surroundingImages={images.filter((_, i) => i !== selectedImage).slice(0, 8)}
-            onClose={() => setSelectedImage(null)}
+            centerImage={selected.image_url}
+            surroundingImages={surroundingImages}
+            onClose={() => setSelectedIndex(null)}
             onSelect={(newImage) => {
-              images.find((img, i) => img === newImage && setSelectedImage(i))
+              const newIndex = images.findIndex(img => img.image_url === newImage);
+              if (newIndex !== -1) setSelectedIndex(newIndex);
             }}
+
           />
         )}
       </AnimatePresence>
