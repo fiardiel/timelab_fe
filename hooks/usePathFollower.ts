@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 export function usePathFollower(
   pathId: string,
   duration: number,
-  svgRef: React.RefObject<SVGSVGElement>,
+  svgRef: React.RefObject<SVGSVGElement | null>,
   paused: boolean,
   startDelay: number = 0
 ) {

@@ -10,7 +10,7 @@ interface SinglePathImageProps {
   duration: number;
   delay: number;
   paused: boolean;
-  svgRef: RefObject<SVGSVGElement>;
+  svgRef: RefObject<SVGSVGElement | null>;
   imageLink: string;
   globalIndex: number;
   onClick?: (index: number) => void;

@@ -17,7 +17,7 @@ jest.mock('@/components/SinglePathImage', () => ({
 }));
 
 describe('PathImageStream', () => {
-  const mockSvgRef = { current: null } as React.RefObject<SVGSVGElement>;
+  const mockSvgRef = { current: null } as React.RefObject<SVGSVGElement | null>;
   const mockImages = ['/img1.png', '/img2.png', '/img3.png'];
 
   it('renders each image except the selected one', () => {

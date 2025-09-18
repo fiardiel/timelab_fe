@@ -8,7 +8,7 @@ interface PathImageStreamProps {
   duration: number;
   delayStep?: number;
   paused: boolean;
-  svgRef: RefObject<SVGSVGElement>;
+  svgRef: RefObject<SVGSVGElement | null>;
   onClick?: (index: number) => void;
   imageLinks: string[];
   selectedIndex?: number | null;
