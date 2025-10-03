@@ -3,6 +3,7 @@ import { runMLPipeline } from '@/lib/runMLPipeline'
 import { createClient } from '@/lib/supabase/client'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { type FileError, type FileRejection, useDropzone } from 'react-dropzone'
+import { useRouter } from 'next/navigation'
 
 const supabase = createClient()
 
@@ -44,6 +45,7 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
     people = {}  // new
   } = options
 
+  const router = useRouter()
   const [files, setFiles] = useState<FileWithPreview[]>([])
   const [loading, setLoading] = useState<boolean>(false)
   const [errors, setErrors] = useState<{ name: string; message: string }[]>([])
@@ -124,13 +126,12 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
         console.log(publicUrl, "publicUrl")
 
         // 3️⃣ Insert row into DB table
-        const peopleClass = await fetchUserClasses()
         const { error: dbError } = await supabase
           .from('imagerecord')
           .insert({
             file_name: publicUrl,
             event: event,
-            people: peopleClass,
+            people: {},
           })
 
         if (dbError) {
@@ -153,6 +154,7 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
 
     if (responseErrors.length === 0 && responseSuccesses.length > 0) {
       await runMLPipeline()
+      router.push('/admin/gallery')
     }
 
     setLoading(false)
