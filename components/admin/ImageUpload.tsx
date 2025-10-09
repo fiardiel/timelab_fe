@@ -8,7 +8,7 @@ export default function FileUploadDemo() {
   const props = useSupabaseUpload({
     bucketName: 'timespace',
     allowedMimeTypes: ['image/*'],
-    maxFiles: 2,
+    maxFiles: 1,
     maxFileSize: 1000 * 1000 * 4,
     event: uuidv4(),
     people: { }

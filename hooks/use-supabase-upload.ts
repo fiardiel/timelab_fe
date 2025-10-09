@@ -1,4 +1,3 @@
-import { fetchUserClasses } from '@/lib/images/photoClasses'
 import { runMLPipeline } from '@/lib/runMLPipeline'
 import { createClient } from '@/lib/supabase/client'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -154,7 +153,7 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
 
     if (responseErrors.length === 0 && responseSuccesses.length > 0) {
       await runMLPipeline()
-      router.push('/admin/gallery')
+      router.push('/gallery')
     }
 
     setLoading(false)
