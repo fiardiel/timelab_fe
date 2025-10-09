@@ -25,6 +25,13 @@
 └─ README.md
 ```
 
+### Certain Files Explained
+There are some certain files that are key to the apps, such as `hooks/use-supabase-upload.tsx`, `auth/login/page.tsx`, `components/admin/ImageUpload.tsx.
+
+- `hooks/use-supabase-upload.tsx`: This file contains a custom React hook that handles image uploads to Supabase and triggers the machine learning pipeline. 
+- auth/login/page.tsx: This file contains the login page component, which handles user authentication and redirects to the admin page upon successful login.
+- components/admin/ImageUpload.tsx: This file contains the image upload component, which provides a drag-and-drop interface for uploading images.
+
 ## Quickstart
 
 ### Prerequisite
@@ -57,7 +64,10 @@ API_BASE_URL=<YOUR API BASE URL>
       npm install
     ```
 
-3.  test
+3.  Run the development server
+    ```
+      npm run dev
+    ```
 
 
 ## Middleware
