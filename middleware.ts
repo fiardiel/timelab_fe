@@ -9,6 +9,7 @@ const validateAccessToken = async (accessToken?: string) => {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
+      credentials: "include",
     })
     return response.ok;
 
@@ -27,6 +28,7 @@ const refreshAccessToken = async (refreshToken?: string) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ refresh: refreshToken }),
+      credentials: "include",
     })
   } catch (error) {
     return null;
@@ -52,7 +54,12 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL("/auth/login", req.url))
     }
     const response = NextResponse.next();
-    response.cookies.set("accessToken", newAccessToken, { path: "/", httpOnly: true });
+    response.cookies.set("accessToken", newAccessToken, {
+      path: "/",
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
     return response
   }
 
