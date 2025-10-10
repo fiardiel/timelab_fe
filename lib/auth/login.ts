@@ -15,7 +15,7 @@ export async function handleLoginFormSubmit(data: LoginForm): Promise<{ ok: bool
 
     const errorResponse = await res.json();
     return { ok: false, message: errorResponse.detail };
-  } catch (error) {
+  } catch {
     return { ok: false, message: "An error occured while logging in" };
   }
 }

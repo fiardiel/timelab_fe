@@ -40,8 +40,8 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
     maxFiles = 1,
     cacheControl = 3600,
     upsert = false,
-    event = 'default_event', // new
-    people = {}  // new
+    event = 'default_event',
+    people = {}
   } = options
 
   const router = useRouter()
@@ -142,7 +142,9 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
       })
     )
 
-    const responseErrors = responses.filter((x) => x.message !== undefined)
+    const responseErrors = responses
+      .filter((x): x is { name: string; message: string } => x.message !== undefined)
+
     setErrors(responseErrors)
 
     const responseSuccesses = responses.filter((x) => x.message === undefined)

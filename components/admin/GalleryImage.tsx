@@ -6,10 +6,9 @@ import React, { useState } from 'react'
 
 interface GalleryImageProps {
   imageSrc: string
-  index: number
 }
 
-const GalleryImage: React.FC<GalleryImageProps> = ({ imageSrc, index }) => {
+const GalleryImage: React.FC<GalleryImageProps> = ({ imageSrc }) => {
   const [isLoading, setIsLoading] = useState(true)
   return (
     <div className='w-full rounded-lg'>

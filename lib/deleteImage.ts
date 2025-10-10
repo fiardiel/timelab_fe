@@ -32,7 +32,7 @@ export async function deleteImage(imageUrl: string, bucketName: string): Promise
     }
 
     return { success: true }
-  } catch (error) {
+  } catch {
     return { success: false, error: 'Unexpected error' }
   }
 }

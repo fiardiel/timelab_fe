@@ -33,16 +33,20 @@ const GalleryImages: React.FC<GalleryImagesProps> = ({ images }) => {
 
   const onDelete = async (imageUrl: string) => {
     const { success, error } = await deleteImage(imageUrl, 'timespace')
+    if (!success) {
+      console.error('Error deleting image:', error)
+      return
+    }
     router.refresh()
   }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 xl:gap-6 p-6">
-      {images.map((image, idx) => (
+      {images.map((image) => (
         <Dialog key={image.image_url} onOpenChange={(open) => !open && setSelectedUrl(null)}>
           <DialogTrigger asChild>
             <div className='cursor-pointer' onClick={() => setSelectedUrl(image.image_url)}>
-              <GalleryImage imageSrc={image.image_url} index={idx} />
+              <GalleryImage imageSrc={image.image_url} />
             </div>
           </DialogTrigger>
 
