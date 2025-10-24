@@ -94,11 +94,6 @@ const LoginPage = () => {
             )}
           </div>
         </form>
-        <Button asChild variant={'link'} >
-          <Link className="mt-10 text-center underline" href="/auth/register">
-            Click here to register as an admin
-          </Link>
-        </Button>
       </div>
     </div>
   );
