@@ -33,13 +33,9 @@ async function setRefreshAndAccessTokens(response: Response) {
   (await cookies()).set("refreshToken", refresh, {
     path: "/",
     httpOnly: true,
-    secure: true,
-    sameSite: "none"
   });
   (await cookies()).set("accessToken", access, {
     path: "/",
     httpOnly: true,
-    secure: true,
-    sameSite: "none"
   });
 }

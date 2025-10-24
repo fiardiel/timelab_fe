@@ -57,8 +57,6 @@ export async function middleware(req: NextRequest) {
     response.cookies.set("accessToken", newAccessToken, {
       path: "/",
       httpOnly: true,
-      secure: true,
-      sameSite: "none",
     });
     return response
   }
